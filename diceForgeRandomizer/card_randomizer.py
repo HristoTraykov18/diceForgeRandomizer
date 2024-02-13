@@ -8,6 +8,7 @@ from PIL import Image
 
 
 class DiceForgeRandomizer():
+    '''Dice Forge Randomizer class'''
     CARDS_PER_BOARD_SIDE = 7
     GAME_MODULES = ('base', 'goddess', 'titans')
 
@@ -56,9 +57,10 @@ class DiceForgeRandomizer():
             boss = boss.convert('RGBA')
             boss_pos = (int((board.size[0] - boss.size[0]) / 2), 0)
             board.paste(boss, boss_pos, boss)
-            board.save('../Desktop/Dice Forge.png')
+            board.save(f'{parent_folder}/Dice Forge.png')
 
     def _add_cards_to_board_sides(self, board, moon_cards, sun_cards):
+        '''Add the card images to the main board image'''
         INITIAL_MARGIN = 448
         SMALL_MARGIN = 80
         LARGE_MARGIN = 170
@@ -86,25 +88,27 @@ class DiceForgeRandomizer():
                        board.size[1] - y_pos)
 
             if i == 6:
+                # Some pretty, unknown to anyone, numbers used to position the images precisely
                 pos_moon = (pos_moon[0] + 65, pos_moon[1] + 40)
                 pos_sun = (pos_sun[0] - 65, pos_sun[1] + 55)
 
             board.paste(moon_card, pos_moon, moon_card)
             board.paste(sun_card, pos_sun, sun_card)
 
-    def _get_cards_lists(self, *args):
-        moon_cards_paths = glob(f'{args[0]}{self.delimiter}?_?.png')
-        sun_cards_paths = glob(f'{args[1]}{self.delimiter}?_?.png')
+    def _get_cards_lists(self, *cards):
+        '''Get separate lists for moon and sun cards'''
+        moon_cards_paths = glob(f'{cards[0]}{self.delimiter}?_?.png')
+        sun_cards_paths = glob(f'{cards[1]}{self.delimiter}?_?.png')
 
         if self.active_module != self.GAME_MODULES[0]:
             module_moon_cards = glob(
-                f'{args[0]}{self.delimiter}?_{self.active_module}.png')
+                f'{cards[0]}{self.delimiter}?_{self.active_module}.png')
             module_sun_cards = glob(
-                f'{args[1]}{self.delimiter}?_{self.active_module}.png')
+                f'{cards[1]}{self.delimiter}?_{self.active_module}.png')
             module_moon_cards_pattern = ''.join(
-                map(str, self._get_filenames_from_list(args[0], module_moon_cards)))
+                map(str, self._get_filenames_from_list(cards[0], module_moon_cards)))
             module_sun_cards_pattern = ''.join(
-                map(str, self._get_filenames_from_list(args[1], module_sun_cards)))
+                map(str, self._get_filenames_from_list(cards[1], module_sun_cards)))
             module_moon_cards_pattern = f'[{module_moon_cards_pattern}]_[0-9].png$'
             module_sun_cards_pattern = f'[{module_sun_cards_pattern}]_[0-9].png$'
 
@@ -119,6 +123,7 @@ class DiceForgeRandomizer():
         return (moon_cards_paths, sun_cards_paths)
 
     def _get_cards_per_row(self, row_num, cards_list):
+        '''Get cards for each row on the board'''
         i = row_num
         cards_per_row = []
         cards_list_len = len(cards_list)
@@ -141,14 +146,9 @@ class DiceForgeRandomizer():
         return cards_per_row
 
     def _get_filenames_from_list(self, directory, paths):
+        '''Get only the names of the files'''
         return [path.removeprefix(directory).strip(self.delimiter)
                 for path in paths]
-
-    def _get_random_card(self, cards):
-        cards_len = len(cards)
-
-    def _rotate_card(self):
-        pass
 
 
 if __name__ == "__main__":
