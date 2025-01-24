@@ -1,5 +1,6 @@
 import argparse
 import time
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -25,18 +26,21 @@ class ImageScrapper:
             r"C:\Program Files\Mozilla Firefox\geckodriver.exe"), options=self.options)
 
     def get_board_game_image(self):
-        try:
-            with open(self.url_list, 'r') as f:
-                for line in f.readlines():
-                    if line.startswith("https://boardgamegeek.com/boardgame"):
-                        self._find_image(line)
-                        time.sleep(1)
-                    else:
-                        print(f"Invalid URL: {line}\nExiting")
-                        exit(1)
-        except FileNotFoundError:
-            print(f"Could not open \"{self.url_list}\". File not found!")
-            exit(1)
+        if Path(self.url_list).exists():
+            try:
+                with open(self.url_list, 'r') as f:
+                    for line in f.readlines():
+                        if line.startswith("https://boardgamegeek.com/boardgame"):
+                            self._find_image(line)
+                            time.sleep(1)
+                        else:
+                            print(f"Invalid URL: {line}\nExiting")
+                            exit(1)
+            except FileNotFoundError:
+                print(f"Could not open \"{self.url_list}\". File not found!")
+                exit(1)
+        else:
+            self._find_image(self.url_list)
 
     def _find_image(self, url: str):
         try:
